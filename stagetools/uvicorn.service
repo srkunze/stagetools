@@ -1,0 +1,9 @@
+[Unit]
+Description=uvicorn daemon
+
+[Service]
+Type=simple
+ExecStart={system.bin_dir}/uvicorn --host localhost --port 8000 {system.asgi_application}
+
+[Install]
+WantedBy=default.target

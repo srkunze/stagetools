@@ -1,0 +1,9 @@
+[Unit]
+Description=hypercorn daemon
+
+[Service]
+Type=simple
+ExecStart={system.bin_dir}/hypercorn --bind localhost:8000 {system.asgi_application}
+
+[Install]
+WantedBy=default.target
