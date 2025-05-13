@@ -23,6 +23,7 @@
 import os
 import re
 import platform
+import sys
 from pathlib import Path
 
 system_matcher = re.compile('(?P<configuration>.+)_(?P<stage_name>.+)').match
@@ -98,17 +99,14 @@ def get_actual_system_from_name(name=None, core_repo=None, core_app=None):
         else:
             pwentry = lambda: 0
             pwentry.pw_name = os.getlogin()
-            name = pwentry.pw_name
-            basedir = Path.home()
     else:
         import pwd
         if name:
             pwentry = pwd.getpwnam(name)
-            basedir = Path(pwentry.pw_dir)
         else:
             pwentry = pwd.getpwuid(os.getuid())  # current user of process
-            name = pwentry.pw_name
-            basedir = Path(pwentry.pw_dir)
+    basedir = Path(sys.prefix)
+    name = name or basedir.name  # usually we do NOT want to override the name given by the directory
 
     match = system_matcher(name)
     if not match:
@@ -144,7 +142,7 @@ def get_expected_system_from_name(name=None, base_dir=None, core_repo=None, core
         else:
             import pwd
             pwentry = pwd.getpwuid(os.getuid())  # current user of process
-            name = pwentry.pw_name
+            name = pwentry.pw_name  # here we still don't have sys.prefix available - fall back to login
 
     system = System()
     system.name = name
