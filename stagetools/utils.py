@@ -139,8 +139,12 @@ def get_actual_system_from_name(name=None, core_repo=None, core_app=None):
 
 def get_expected_system_from_name(name=None, base_dir=None, core_repo=None, core_app=None):
     if not name:
-        pwentry = pwd.getpwuid(os.getuid())  # current user of process
-        name = pwentry.pw_name
+        if platform.system() == 'Windows':
+            raise NotImplementedError
+        else:
+            import pwd
+            pwentry = pwd.getpwuid(os.getuid())  # current user of process
+            name = pwentry.pw_name
 
     system = System()
     system.name = name
